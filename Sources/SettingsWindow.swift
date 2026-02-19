@@ -21,7 +21,7 @@ class SettingsWindowController {
         let window = NSWindow(contentViewController: hostingController)
         window.title = "Desktop Label Settings"
         window.styleMask = [.titled, .closable, .miniaturizable]
-        window.setContentSize(NSSize(width: 480, height: 500))
+        window.setContentSize(NSSize(width: 560, height: 580))
         window.center()
         window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)
@@ -41,6 +41,7 @@ struct SpaceEntry: Identifiable {
     let id = UUID()
     var number: String
     var label: String
+    var wallpaper: String
 }
 
 struct SettingsView: View {
@@ -60,27 +61,54 @@ struct SettingsView: View {
             GroupBox("Spaces") {
                 VStack(spacing: 8) {
                     ForEach($spaces) { $entry in
-                        HStack(spacing: 8) {
-                            Text("Space")
-                                .foregroundColor(.secondary)
-                            TextField("#", text: $entry.number)
-                                .frame(width: 40)
-                                .textFieldStyle(.roundedBorder)
-                            TextField("Project name", text: $entry.label)
-                                .textFieldStyle(.roundedBorder)
-                            Button(role: .destructive) {
-                                spaces.removeAll { $0.id == entry.id }
-                            } label: {
-                                Image(systemName: "minus.circle.fill")
-                                    .foregroundColor(.red)
+                        VStack(spacing: 4) {
+                            HStack(spacing: 8) {
+                                Text("Space")
+                                    .foregroundColor(.secondary)
+                                TextField("#", text: $entry.number)
+                                    .frame(width: 40)
+                                    .textFieldStyle(.roundedBorder)
+                                TextField("Label", text: $entry.label)
+                                    .textFieldStyle(.roundedBorder)
+                                Button(role: .destructive) {
+                                    spaces.removeAll { $0.id == entry.id }
+                                } label: {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
+                            HStack(spacing: 8) {
+                                Text("Wallpaper")
+                                    .foregroundColor(.secondary)
+                                    .frame(width: 68, alignment: .trailing)
+                                TextField("None", text: $entry.wallpaper)
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.caption)
+                                Button("Browse…") {
+                                    let panel = NSOpenPanel()
+                                    panel.canChooseDirectories = false
+                                    if !entry.wallpaper.isEmpty {
+                                        let expanded = NSString(string: entry.wallpaper).expandingTildeInPath
+                                        let dir = URL(fileURLWithPath: expanded).deletingLastPathComponent()
+                                        if FileManager.default.fileExists(atPath: dir.path) {
+                                            panel.directoryURL = dir
+                                        }
+                                    }
+                                    if panel.runModal() == .OK, let url = panel.url {
+                                        entry.wallpaper = url.path
+                                    }
+                                }
+                                .controlSize(.small)
+                            }
                         }
+                        .padding(.bottom, 4)
+                        Divider()
                     }
 
                     Button {
                         let next = (spaces.compactMap { Int($0.number) }.max() ?? 0) + 1
-                        spaces.append(SpaceEntry(number: String(next), label: ""))
+                        spaces.append(SpaceEntry(number: String(next), label: "", wallpaper: ""))
                     } label: {
                         Label("Add Space", systemImage: "plus.circle.fill")
                     }
@@ -174,19 +202,25 @@ struct SettingsView: View {
         position = config.position
         backgroundColor = config.backgroundColor
         textColor = config.textColor
+        let wallpapers = config.wallpapers ?? [:]
         spaces = config.spaces
             .sorted { Int($0.key) ?? 0 < Int($1.key) ?? 0 }
-            .map { SpaceEntry(number: $0.key, label: $0.value) }
+            .map { SpaceEntry(number: $0.key, label: $0.value, wallpaper: wallpapers[$0.key] ?? "") }
     }
 
     private func save() {
         var spacesDict: [String: String] = [:]
+        var wallpapersDict: [String: String] = [:]
         for entry in spaces where !entry.number.isEmpty && !entry.label.isEmpty {
             spacesDict[entry.number] = entry.label
+            if !entry.wallpaper.isEmpty {
+                wallpapersDict[entry.number] = entry.wallpaper
+            }
         }
 
         let config = Config(
             spaces: spacesDict,
+            wallpapers: wallpapersDict.isEmpty ? nil : wallpapersDict,
             fontSize: fontSize,
             opacity: opacity,
             position: position,

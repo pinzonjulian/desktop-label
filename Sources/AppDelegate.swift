@@ -36,13 +36,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func spaceChanged(_ notification: Notification) {
-        updateLabel()
+        // Small delay to let the space transition complete before querying
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
+            updateLabel()
+        }
     }
 
     func updateLabel() {
         let spaceIndex = spaceDetector.currentSpaceIndex()
         let label = config.labelForSpace(spaceIndex)
         overlayWindow.update(label: label, spaceIndex: spaceIndex)
+        updateWallpaper(for: spaceIndex)
+    }
+
+    func updateWallpaper(for spaceIndex: Int) {
+        guard let wallpaperURL = config.wallpaperForSpace(spaceIndex),
+              let screen = NSScreen.main else { return }
+        do {
+            try NSWorkspace.shared.setDesktopImageURL(wallpaperURL, for: screen, options: [:])
+        } catch {
+            print("⚠️  Failed to set wallpaper: \(error)")
+        }
     }
 
     func setupMenuBar() {
