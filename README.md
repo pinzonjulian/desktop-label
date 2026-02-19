@@ -14,8 +14,9 @@ macOS Spaces have no visual identity — they're just numbered slots. When you'r
 - **Floating overlay** — translucent pill-shaped label pinned to a screen corner
 - **Click-through** — never interferes with your workflow
 - **Follows you across Spaces** — updates automatically when you switch desktops
+- **Wallpaper per Space** — automatically switches your desktop wallpaper when you change Spaces
 - **Menu bar app** — no dock icon, stays out of the way
-- **Settings UI** — add/remove/rename spaces, adjust position, font size, opacity, and colors
+- **Settings UI** — configure labels, wallpapers, position, font size, opacity, and colors
 - **JSON config** — also editable at `~/.config/desktop-label/config.json`
 
 ## Install
@@ -43,6 +44,11 @@ On first launch, a default config is created at `~/.config/desktop-label/config.
     "2": "project-b",
     "3": "personal"
   },
+  "wallpapers": {
+    "1": "/System/Library/Desktop Pictures/iMac Blue.heic",
+    "2": "/System/Library/Desktop Pictures/iMac Green.heic",
+    "3": "/System/Library/Desktop Pictures/iMac Orange.heic"
+  },
   "fontSize": 14,
   "opacity": 0.75,
   "position": "top-left",
@@ -50,6 +56,8 @@ On first launch, a default config is created at `~/.config/desktop-label/config.
   "textColor": "#FFFFFF"
 }
 ```
+
+Wallpapers are optional — leave them out or set per-space via **Settings → Browse…**. Use `.heic` or standard image files (`.madesktop` files are not supported).
 
 You can edit this file directly or use **🏷 → Settings…** in the menu bar.
 
