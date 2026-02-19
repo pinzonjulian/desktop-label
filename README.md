@@ -63,6 +63,21 @@ You can edit this file directly or use **🏷 → Settings…** in the menu bar.
 
 `top-left` · `top-right` · `bottom-left` · `bottom-right`
 
+## Uninstall
+
+```bash
+# Stop the app
+pkill DesktopLabel
+
+# Remove the binary
+rm /usr/local/bin/DesktopLabel
+
+# Remove config and all app data
+rm -rf ~/.config/desktop-label
+```
+
+If you added Desktop Label to your login items, remove it from **System Settings → General → Login Items**.
+
 ## How it works
 
 Desktop Label uses macOS CoreGraphics private SPI (`CGSGetActiveSpace`, `CGSCopyManagedDisplaySpaces`) to detect the current Space — the same stable APIs used by [yabai](https://github.com/koekeishiya/yabai) and [SketchyBar](https://github.com/FelixKratz/SketchyBar). It listens for `activeSpaceDidChangeNotification` to update the label when you switch desktops.
