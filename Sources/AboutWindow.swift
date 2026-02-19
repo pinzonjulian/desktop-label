@@ -16,7 +16,7 @@ class AboutWindowController {
         let window = NSWindow(contentViewController: hostingController)
         window.title = "About Desktop Label"
         window.styleMask = [.titled, .closable]
-        window.setContentSize(NSSize(width: 360, height: 260))
+        hostingController.sizingOptions = .preferredContentSize
         window.center()
         window.isReleasedWhenClosed = false
         window.makeKeyAndOrderFront(nil)
@@ -39,29 +39,26 @@ struct AboutView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("A floating overlay that shows your\nproject name on each macOS Space.")
+            Text("A floating overlay that labels\nyour macOS Spaces.")
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(.secondary)
 
             Divider()
 
             VStack(alignment: .leading, spacing: 8) {
-                LinkRow(label: "GitHub", url: repoURL)
-                LinkRow(label: "Amp Thread", url: threadURL)
+                LinkRow(label: "GitHub", displayText: "pinzonjulian/desktop-label", url: repoURL)
+                LinkRow(label: "Amp Thread", displayText: "View original thread", url: threadURL)
             }
-
-            Spacer()
-
-            Text("Built with Amp ⚡️")
-                .font(.caption)
-                .foregroundColor(.secondary)
         }
         .padding(24)
+        .frame(width: 340)
     }
 }
 
 struct LinkRow: View {
     let label: String
+    let displayText: String
     let url: String
 
     var body: some View {
@@ -69,8 +66,7 @@ struct LinkRow: View {
             Text(label)
                 .frame(width: 80, alignment: .trailing)
                 .foregroundColor(.secondary)
-            Link(url, destination: URL(string: url)!)
-                .font(.caption)
+            Link(displayText, destination: URL(string: url)!)
         }
     }
 }
