@@ -20,14 +20,17 @@ macOS Spaces have no visual identity — they're just numbered slots. When you'r
 
 ## Install
 
+Clone it wherever you keep your source code:
+
 ```bash
+cd ~/src  # or wherever you prefer
 git clone https://github.com/pinzonjulian/desktop-label.git
 cd desktop-label
 swift build -c release
-mkdir -p ~/bin && cp .build/release/DesktopLabel ~/bin/
+.build/release/DesktopLabel &
 ```
 
-Then run `~/bin/DesktopLabel` or add it to your login items. Make sure `~/bin` is in your `PATH` if you want to run it by name.
+To start it automatically, add `.build/release/DesktopLabel` to your login items.
 
 ## Usage
 
@@ -69,8 +72,8 @@ You can edit this file directly or use **🏷 → Settings…** in the menu bar.
 # Stop the app
 pkill DesktopLabel
 
-# Remove the binary
-rm ~/bin/DesktopLabel
+# Remove the repo
+rm -rf /path/to/desktop-label
 
 # Remove config and all app data
 rm -rf ~/.config/desktop-label
