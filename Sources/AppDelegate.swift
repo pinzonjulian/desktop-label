@@ -6,6 +6,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var spaceDetector: SpaceDetector!
     var config: Config!
     var settingsController: SettingsWindowController!
+    var aboutController: AboutWindowController!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         config = Config.load()
@@ -16,6 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         overlayWindow.orderFrontRegardless()
 
         settingsController = SettingsWindowController()
+        aboutController = AboutWindowController()
         setupMenuBar()
 
         NSWorkspace.shared.notificationCenter.addObserver(
@@ -48,11 +50,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.button?.title = "🏷"
 
         let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "About Desktop Label", action: #selector(openAbout), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Settings…", action: #selector(openSettings), keyEquivalent: ","))
         menu.addItem(NSMenuItem(title: "Reload Config", action: #selector(reloadConfig), keyEquivalent: "r"))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q"))
         statusItem.menu = menu
+    }
+
+    @objc func openAbout() {
+        aboutController.show()
     }
 
     @objc func openSettings() {
